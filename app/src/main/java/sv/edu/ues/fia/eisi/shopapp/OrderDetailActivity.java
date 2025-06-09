@@ -26,7 +26,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import sv.edu.ues.fia.eisi.shopapp.OrderDetailProductAdapter;
+import sv.edu.ues.fia.eisi.shopapp.adapter.OrderDetailProductAdapter;
 import sv.edu.ues.fia.eisi.shopapp.models.Pedido; // Usamos Pedido
 import sv.edu.ues.fia.eisi.shopapp.models.DetallePedido; // Usamos DetallePedido
 

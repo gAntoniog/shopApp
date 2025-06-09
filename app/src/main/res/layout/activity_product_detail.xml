@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/background1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ProductDetailActivity"> <!-- Asegúrate de crear ProductDetailActivity.java -->
@@ -11,7 +12,7 @@
         android:id="@+id/detailTopBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#A7FFEB"
+        android:background="#8FBF96"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -59,10 +60,10 @@
             <ImageView
                 android:id="@+id/productDetailImageView"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="291dp"
+                android:contentDescription="Imagen del producto"
                 android:scaleType="centerCrop"
-                android:src="@drawable/product_example_shirt"
-            android:contentDescription="Imagen del producto" />
+                android:src="@drawable/product_example_shirt" />
 
             <TextView
                 android:id="@+id/productDetailNameTextView"
@@ -130,10 +131,10 @@
 
                 <Button
                     android:id="@+id/buttonDecreaseQuantity"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:text="-"
-                    android:backgroundTint="#A7FFEB"
+                    android:backgroundTint="#8FBF96"
                     android:textColor="@android:color/black"
                     app:cornerRadius="8dp" />
 
@@ -150,10 +151,10 @@
 
                 <Button
                     android:id="@+id/buttonIncreaseQuantity"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:text="+"
-                    android:backgroundTint="#A7FFEB"
+                    android:backgroundTint="#8FBF96"
                     android:textColor="@android:color/black"
                     app:cornerRadius="8dp" />
             </LinearLayout>
@@ -165,7 +166,7 @@
                 android:layout_height="wrap_content"
                 android:text="Agregar al Carrito"
                 android:layout_marginTop="24dp"
-                android:backgroundTint="#A7FFEB"
+                android:backgroundTint="#8FBF96"
                 android:textColor="@android:color/black"
                 app:cornerRadius="8dp" />
 

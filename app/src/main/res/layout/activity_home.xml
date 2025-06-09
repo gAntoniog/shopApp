@@ -4,22 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeActivity"> <!-- Asegúrate de crear HomeActivity.java -->
+    android:background="@drawable/background1"
+    tools:context=".HomeActivity">
 
-    <!-- Barra Superior con icono de menú y posible logo/título -->
+
+    <!-- Top Bar with menu icon and possible logo/title -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#A7FFEB"
+        android:background="#8FBF96"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
             android:id="@+id/menuIcon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/icon_menu"
             android:layout_marginStart="16dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -41,7 +43,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Carrusel de marcas (usando HorizontalScrollView y LinearLayout para simplicidad) -->
+    <!-- Brands Carousel (using HorizontalScrollView and LinearLayout for simplicity) -->
     <HorizontalScrollView
         android:id="@+id/brandsScrollView"
         android:layout_width="match_parent"
@@ -60,44 +62,60 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-
+            <!-- Each brand logo is now explicitly identified for click listeners -->
             <ImageView
+                android:id="@+id/logoNike"
                 android:layout_width="80dp"
                 android:layout_height="50dp"
                 android:layout_marginEnd="8dp"
                 android:src="@drawable/logo_nike"
                 android:scaleType="fitCenter"
-                android:contentDescription="Logo Nike" />
+                android:contentDescription="Logo Nike"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless" />
 
             <ImageView
+                android:id="@+id/logoLevis"
                 android:layout_width="80dp"
                 android:layout_height="50dp"
                 android:layout_marginEnd="8dp"
                 android:src="@drawable/logo_levis"
                 android:scaleType="fitCenter"
-                android:contentDescription="Logo Levis" />
+                android:contentDescription="Logo Levis"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless" />
 
             <ImageView
+                android:id="@+id/logoDickies"
                 android:layout_width="80dp"
                 android:layout_height="50dp"
                 android:layout_marginEnd="8dp"
                 android:src="@drawable/logo_dickies"
                 android:scaleType="fitCenter"
-                android:contentDescription="Logo Dickies" />
+                android:contentDescription="Logo Dickies"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless" />
 
             <ImageView
+                android:id="@+id/logoTimberland"
                 android:layout_width="80dp"
                 android:layout_height="50dp"
                 android:layout_marginEnd="8dp"
                 android:src="@drawable/logo_timberland"
                 android:scaleType="fitCenter"
-                android:contentDescription="Logo Timberland" />
-            <!-- Agrega más logos de marcas según sea necesario -->
+                android:contentDescription="Logo Timberland"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless" />
+            <!-- Add more brand logos as needed -->
 
         </LinearLayout>
     </HorizontalScrollView>
 
-    <!-- Lista de productos (usando RecyclerView con GridLayoutManager) -->
+    <!-- Product list (using RecyclerView with GridLayoutManager) -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/productsRecyclerView"
         android:layout_width="0dp"
@@ -111,11 +129,11 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         tools:listitem="@layout/item_product_grid" />
 
-    <!-- Barra de Navegación Inferior -->
+    <!-- Bottom Navigation Bar -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         app:menu="@menu/bottom_nav_menu"
         android:background="?android:attr/windowBackground"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -11,20 +11,25 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 import sv.edu.ues.fia.eisi.shopapp.models.Usuario; // Importa el modelo Usuario
+import sv.edu.ues.fia.eisi.shopapp.util.AppDataManager;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private static final String PREFS_NAME = "TiendaRopaPrefs";
-    private static final String KEY_REGISTERED_USER = "registeredUser";
+    private static final String PREFS_NAME = "TiendaRopaPrefs"; // Se sigue usando para el estado de login
+    // No necesitamos KEY_REGISTERED_USER aquí directamente, AppDataManager lo maneja
 
     private TextInputEditText editTextName, editTextPhone, editTextRegisterEmail,
             editTextRegisterPassword, editTextConfirmPassword, editTextAddress;
     private Button buttonRegister;
 
+    private AppDataManager appDataManager; // Instancia de AppDataManager
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        appDataManager = AppDataManager.getInstance(this); // Inicializar AppDataManager
 
         editTextName = findViewById(R.id.editTextName);
         editTextPhone = findViewById(R.id.editTextPhone);
@@ -43,7 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     /**
-     * Intenta registrar al usuario localmente en SharedPreferences.
+     * Intenta registrar al usuario usando AppDataManager.
      */
     private void attemptRegistration() {
         String name = editTextName.getText().toString().trim();
@@ -63,30 +68,15 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        Gson gson = new Gson();
-
-        // Verificar si ya hay un usuario registrado con este email
-        String existingUserJson = prefs.getString(KEY_REGISTERED_USER, null);
-        if (existingUserJson != null) {
-            Usuario existingUser = gson.fromJson(existingUserJson, Usuario.class);
-            if (existingUser.getCorreo().equals(email)) {
-                Toast.makeText(this, "Este email ya está registrado. Intenta iniciar sesión.", Toast.LENGTH_LONG).show();
-                return;
-            }
+        // Verificar si el email ya existe usando AppDataManager
+        if (appDataManager.getUserByEmail(email) != null) {
+            Toast.makeText(this, "Este email ya está registrado. Intenta iniciar sesión.", Toast.LENGTH_LONG).show();
+            return;
         }
 
-        // Crear un nuevo objeto Usuario (simulando un ID autoincrementado)
-        Usuario newUser = new Usuario(
-                (int) (System.currentTimeMillis() / 1000), // Usar timestamp como ID simple
-                name, email, password, address, phone, 2 // id_rol 2 para cliente
-        );
-
-        // Convertir el objeto Usuario a JSON y guardarlo en SharedPreferences
-        String userJson = gson.toJson(newUser);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(KEY_REGISTERED_USER, userJson);
-        editor.apply();
+        // Crear un nuevo objeto Usuario (el ID se asignará automáticamente en AppDataManager)
+        Usuario newUser = new Usuario(0, name, email, password, address, phone, 2); // Rol 2 para cliente
+        appDataManager.addUser(newUser); // Añadir el usuario a través de AppDataManager
 
         Toast.makeText(this, "Registro exitoso. ¡Ahora puedes iniciar sesión!", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);

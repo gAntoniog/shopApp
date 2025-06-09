@@ -8,12 +8,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -24,33 +24,35 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import sv.edu.ues.fia.eisi.shopapp.CartAdapter;
+import sv.edu.ues.fia.eisi.shopapp.adapter.CartAdapter;
 import sv.edu.ues.fia.eisi.shopapp.models.DetallePedido; // Usamos DetallePedido para el carrito
 import sv.edu.ues.fia.eisi.shopapp.models.Pedido; // Usamos Pedido para simular la compra
+import sv.edu.ues.fia.eisi.shopapp.util.AppDataManager;
 
 public class CartActivity extends AppCompatActivity {
 
     private static final String TAG = "CartActivity";
-    private static final String PREFS_NAME = "TiendaRopaPrefs";
-    private static final String KEY_LOCAL_CART = "localCart";
-    private static final String KEY_LOCAL_ORDERS = "localOrders";
-    private static final String KEY_CURRENT_USER_ID = "currentUserId";
+    private static final String PREFS_NAME = "TiendaRopaPrefs"; // Se mantiene solo para currentUserId y role
 
     private RecyclerView cartRecyclerView;
     private CartAdapter cartAdapter;
     private List<DetallePedido> cartItems;
     private TextView cartTotalTextView;
     private Button buttonCheckout;
+    private BottomNavigationView bottomNavigationView;
 
     private int currentUserId;
+    private AppDataManager appDataManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
+        appDataManager = AppDataManager.getInstance(this);
+
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        currentUserId = prefs.getInt(KEY_CURRENT_USER_ID, -1);
+        currentUserId = prefs.getInt("currentUserId", -1);
 
         if (currentUserId == -1) {
             Toast.makeText(this, "Debes iniciar sesión para ver tu carrito.", Toast.LENGTH_LONG).show();
@@ -63,82 +65,87 @@ public class CartActivity extends AppCompatActivity {
         cartRecyclerView = findViewById(R.id.cartRecyclerView);
         cartTotalTextView = findViewById(R.id.cartTotalTextView);
         buttonCheckout = findViewById(R.id.buttonCheckout);
+        bottomNavigationView = findViewById(R.id.bottomNavigationViewCart);
 
-        cartItems = new ArrayList<>();
+        cartItems = new ArrayList<>(); // Initialize the list
         cartAdapter = new CartAdapter(cartItems);
         cartRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         cartRecyclerView.setAdapter(cartAdapter);
 
-        // Configurar acciones del adaptador del carrito
         cartAdapter.setOnItemActionListener(new CartAdapter.OnItemActionListener() {
             @Override
             public void onQuantityChange(DetallePedido item, int newQuantity) {
-                // Actualizar la cantidad del item en la lista y recalcular total
+                // Update quantity in the in-memory list
                 for (DetallePedido cartItem : cartItems) {
-                    if (cartItem.getId() == item.getId()) { // Asume que el ID del DetallePedido es único en el carrito
+                    if (cartItem.getIdProducto() == item.getIdProducto() /* && (item.getIdCaracteristica() == cartItem.getIdCaracteristica()) */ ) {
                         cartItem.setCantidad(newQuantity);
                         break;
                     }
                 }
-                saveCartToPrefs(); // Guardar el carrito actualizado
-                updateCartTotal(); // Actualizar el total en la UI
-                cartAdapter.notifyDataSetChanged(); // Notificar al adaptador para que actualice la UI
+                appDataManager.saveCartItems(cartItems); // Save updated cart via AppDataManager
+                updateCartTotal();
+                cartAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onRemoveItem(DetallePedido item) {
-                // Eliminar el item del carrito
                 cartItems.remove(item);
-                saveCartToPrefs();
+                appDataManager.saveCartItems(cartItems); // Save updated cart via AppDataManager
                 updateCartTotal();
                 cartAdapter.notifyDataSetChanged();
                 Toast.makeText(CartActivity.this, "Producto eliminado del carrito.", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Botón para volver
         ImageView backIcon = findViewById(R.id.cartBackIcon);
         backIcon.setOnClickListener(v -> onBackPressed());
 
         buttonCheckout.setOnClickListener(v -> simulateCheckout());
 
-        loadCartFromPrefs(); // Cargar el carrito al inicio
-        updateCartTotal(); // Actualizar el total del carrito
+        // Load cart items and update total when activity starts/resumes
+        loadCartItems();
+        updateCartTotal();
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_home) {
+                Intent intent = new Intent(CartActivity.this, HomeActivity.class);
+                startActivity(intent);
+                finish();
+                return true;
+            } else if (itemId == R.id.navigation_categories) {
+                Intent categoriesIntent = new Intent(CartActivity.this, CategoriesActivity.class);
+                startActivity(categoriesIntent);
+                return true;
+            } else if (itemId == R.id.navigation_cart) {
+                return true;
+            } else if (itemId == R.id.navigation_profile) {
+                Intent profileIntent = new Intent(CartActivity.this, OrdersListActivity.class);
+                startActivity(profileIntent);
+                return true;
+            }
+            return false;
+        });
+        bottomNavigationView.setSelectedItemId(R.id.navigation_cart);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadCartItems(); // Reload cart items every time the activity resumes
+        updateCartTotal();
     }
 
     /**
-     * Carga los items del carrito desde SharedPreferences.
+     * Loads cart items from AppDataManager.
      */
-    private void loadCartFromPrefs() {
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        Gson gson = new Gson();
-        String cartJson = prefs.getString(KEY_LOCAL_CART, null);
-        Type type = new TypeToken<List<DetallePedido>>(){}.getType();
-
-        if (cartJson != null) {
-            cartItems.clear();
-            cartItems.addAll(gson.fromJson(cartJson, type));
-        } else {
-            cartItems.clear();
-        }
+    private void loadCartItems() {
+        cartItems.clear();
+        cartItems.addAll(appDataManager.getCartItems());
         cartAdapter.notifyDataSetChanged();
+        Log.d(TAG, "Cart items loaded: " + cartItems.size());
     }
 
-    /**
-     * Guarda los items del carrito en SharedPreferences.
-     */
-    private void saveCartToPrefs() {
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        Gson gson = new Gson();
-        String cartJson = gson.toJson(cartItems);
-        editor.putString(KEY_LOCAL_CART, cartJson);
-        editor.apply();
-    }
-
-    /**
-     * Actualiza el TextView del total del carrito.
-     */
     private void updateCartTotal() {
         double total = 0;
         for (DetallePedido item : cartItems) {
@@ -148,7 +155,8 @@ public class CartActivity extends AppCompatActivity {
     }
 
     /**
-     * Simula el proceso de checkout (pasar del carrito a un pedido real).
+     * Simulates the checkout process, creating an order and clearing the cart.
+     * Now uses AppDataManager for all order and cart operations.
      */
     private void simulateCheckout() {
         if (cartItems.isEmpty()) {
@@ -156,48 +164,23 @@ public class CartActivity extends AppCompatActivity {
             return;
         }
 
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        Gson gson = new Gson();
-
-        // Calcular total del pedido
         double total = 0;
         for (DetallePedido item : cartItems) {
             total += item.getPrecioUnitario() * item.getCantidad();
         }
 
-        // Crear un nuevo objeto Pedido
-        int newOrderId = (int) (System.currentTimeMillis() / 1000); // ID simple para el pedido
         String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-        Pedido newOrder = new Pedido(newOrderId, currentUserId, currentDate, "pendiente", total);
-        newOrder.setDetalles(new ArrayList<>(cartItems)); // Copiar los detalles al pedido
+        Pedido newOrder = new Pedido(0, currentUserId, currentDate, "pendiente", total);
 
-        // Obtener la lista de pedidos existentes y añadir el nuevo
-        String ordersJson = prefs.getString(KEY_LOCAL_ORDERS, null);
-        Type ordersListType = new TypeToken<List<Pedido>>(){}.getType();
-        List<Pedido> currentOrders;
-        if (ordersJson != null) {
-            currentOrders = gson.fromJson(ordersJson, ordersListType);
-        } else {
-            currentOrders = new ArrayList<>();
-        }
-        currentOrders.add(newOrder);
+        appDataManager.addOrder(newOrder, new ArrayList<>(cartItems)); // Add order and its details via AppDataManager
+        appDataManager.clearCart(); // Clear the cart via AppDataManager
 
-        // Guardar pedidos actualizados
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(KEY_LOCAL_ORDERS, gson.toJson(currentOrders));
+        cartItems.clear(); // Clear the in-memory list
+        cartAdapter.notifyDataSetChanged(); // Notify adapter to reflect changes
 
-        // Además, guardar los detalles del pedido en una clave separada
-        String orderDetailsKey = "orderDetails_" + newOrderId;
-        editor.putString(orderDetailsKey, gson.toJson(cartItems));
-
-        // Vaciar el carrito después de la compra
-        editor.remove(KEY_LOCAL_CART);
-        editor.apply();
-
-        Toast.makeText(this, "Compra realizada exitosamente! Pedido #" + newOrderId, Toast.LENGTH_LONG).show();
-        // Redirigir a la lista de pedidos
+        Toast.makeText(this, "Compra realizada exitosamente! Pedido #" + newOrder.getId(), Toast.LENGTH_LONG).show();
         Intent intent = new Intent(CartActivity.this, OrdersListActivity.class);
         startActivity(intent);
-        finish(); // Finalizar esta actividad
+        finish();
     }
 }

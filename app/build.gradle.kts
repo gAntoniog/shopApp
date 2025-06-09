@@ -42,6 +42,7 @@ dependencies {
     implementation(libs.picasso)
     implementation(libs.gson)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.lottie)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

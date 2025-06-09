@@ -6,11 +6,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import sv.edu.ues.fia.eisi.shopapp.CategoryAdapter;
+import sv.edu.ues.fia.eisi.shopapp.adapter.CategoryAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,6 +1,8 @@
 package sv.edu.ues.fia.eisi.shopapp.models;
 
-public class Usuario {
+import java.io.Serializable; // Importar Serializable
+
+public class Usuario implements Serializable { // Implementar Serializable
     private int id;
     private String nombre;
     private String correo;

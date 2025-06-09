@@ -1,4 +1,4 @@
-package sv.edu.ues.fia.eisi.shopapp;
+package sv.edu.ues.fia.eisi.shopapp.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import sv.edu.ues.fia.eisi.shopapp.R;
 import sv.edu.ues.fia.eisi.shopapp.models.DetallePedido; // Usamos el modelo DetallePedido
 
 import com.squareup.picasso.Picasso;

@@ -2,15 +2,18 @@ package sv.edu.ues.fia.eisi.shopapp.models;
 
 import java.util.List;
 
-public class Pedido {
+import java.io.Serializable; // Importar Serializable
+
+
+public class Pedido implements Serializable { // Implementar Serializable
     private int id;
     private int idUsuario;
     private String fecha; // Guardaremos la fecha como String (ej. "yyyy-MM-dd HH:mm:ss")
     private String estado; // "pendiente", "completado", "cancelado"
     private double total;
-    // Lista de detalles de pedido (será un campo transitorio si se guarda en SharedPreferences,
-    // o se gestionará por separado)
-    private transient List<DetallePedido> detalles; // 'transient' para que Gson no lo incluya si serializas el Pedido entero
+    // Lista de detalles de pedido. 'transient' para que Gson no la serialice directamente
+    // con el objeto Pedido, sino que la gestionaremos por separado si es necesario.
+    private transient List<DetallePedido> detalles;
 
     // Constructor
     public Pedido(int id, int idUsuario, String fecha, String estado, double total) {
@@ -33,7 +36,9 @@ public class Pedido {
     public double getTotal() { return total; }
     public void setTotal(double total) { this.total = total; }
 
-    // Getter y Setter para detalles
+    // Getter y Setter para detalles (no se serializará automáticamente por Gson)
     public List<DetallePedido> getDetalles() { return detalles; }
     public void setDetalles(List<DetallePedido> detalles) { this.detalles = detalles; }
 }
+
+

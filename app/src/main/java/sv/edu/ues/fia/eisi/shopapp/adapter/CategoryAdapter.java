@@ -1,4 +1,4 @@
-package sv.edu.ues.fia.eisi.shopapp;
+package sv.edu.ues.fia.eisi.shopapp.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;

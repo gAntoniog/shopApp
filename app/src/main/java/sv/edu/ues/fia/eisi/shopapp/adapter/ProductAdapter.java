@@ -1,4 +1,4 @@
-package sv.edu.ues.fia.eisi.shopapp;
+package sv.edu.ues.fia.eisi.shopapp.adapter;
 
 
 import android.view.LayoutInflater;
@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 
 
+import sv.edu.ues.fia.eisi.shopapp.R;
 import sv.edu.ues.fia.eisi.shopapp.models.Producto; // Usamos el modelo Producto
 
 

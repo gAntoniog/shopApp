@@ -23,12 +23,12 @@ import java.util.List;
 
 import sv.edu.ues.fia.eisi.shopapp.models.Producto; // Usamos Producto
 import sv.edu.ues.fia.eisi.shopapp.models.DetallePedido; // Usamos DetallePedido para el carrito
+import sv.edu.ues.fia.eisi.shopapp.util.AppDataManager;
 
 public class ProductDetailActivity extends AppCompatActivity {
 
     private static final String TAG = "ProductDetailActivity";
-    private static final String PREFS_NAME = "TiendaRopaPrefs";
-    private static final String KEY_LOCAL_CART = "localCart";
+    private static final String PREFS_NAME = "TiendaRopaPrefs"; // Se mantiene solo para currentUserId y role
 
     private ImageView productDetailImageView;
     private TextView productDetailNameTextView;
@@ -43,10 +43,19 @@ public class ProductDetailActivity extends AppCompatActivity {
     private int currentQuantity = 1;
     private Producto currentProduct;
 
+    private AppDataManager appDataManager; // Instancia de AppDataManager
+    private int currentUserId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
+
+        appDataManager = AppDataManager.getInstance(this);
+
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        currentUserId = prefs.getInt("currentUserId", -1); // Usar la clave correcta de SharedPreferences
+
 
         productId = getIntent().getIntExtra("productId", -1);
         if (productId == -1) {
@@ -110,28 +119,14 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * Carga los detalles de un producto simulado de una lista hardcodeada.
+     * Loads product details from AppDataManager.
      */
     private void loadProductDetails(int id) {
-        // La lista de productos debe ser consistente con la de HomeActivity.
-        List<Producto> mockProducts = new ArrayList<>();
-        mockProducts.add(new Producto(1, "Camisa Deportiva", "Camisa de poliéster transpirable, ideal para deportes y actividades al aire libre. Diseño ergonómico para mayor comodidad.", 25.99, "Camisas", "https://placehold.co/300x300/A7FFEB/000000?text=Camisa+1"));
-        mockProducts.add(new Producto(2, "Pantalón Casual", "Pantalón de algodón cómodo para el día a día. Bolsillos laterales y corte recto.", 39.99, "Pantalones", "https://placehold.co/300x300/A7FFEB/000000?text=Pantalon+1"));
-        mockProducts.add(new Producto(3, "Chaqueta de Invierno", "Chaqueta acolchada y cálida, resistente al agua y al viento. Ideal para climas fríos.", 79.99, "Chaquetas", "https://placehold.co/300x300/A7FFEB/000000?text=Chaqueta+1"));
-        mockProducts.add(new Producto(4, "Falda Vaquera", "Falda de mezclilla de corte alto con detalles desgastados y botones frontales. Estilo vintage.", 30.50, "Faldas", "https://placehold.co/300x300/A7FFEB/000000?text=Falda+1"));
-        mockProducts.add(new Producto(5, "Vestido de Verano", "Vestido ligero y fresco para los días calurosos. Tejido suave y diseño floral.", 45.00, "Vestidos", "https://placehold.co/300x300/A7FFEB/000000?text=Vestido+1"));
-        mockProducts.add(new Producto(6, "Sudadera con Capucha", "Sudadera de algodón suave con diseño moderno y capucha ajustable. Perfecta para el ocio.", 35.00, "Sudaderas", "https://placehold.co/300x300/A7FFEB/000000?text=Sudadera+1"));
-
-        for (Producto p : mockProducts) {
-            if (p.getId() == id) {
-                currentProduct = p;
-                break;
-            }
-        }
+        currentProduct = appDataManager.getProductById(id);
 
         if (currentProduct != null) {
             productDetailNameTextView.setText(currentProduct.getNombre());
-            productDetailBrandTextView.setText(currentProduct.getCategoria());
+            productDetailBrandTextView.setText(currentProduct.getMarca());
             productDetailPriceTextView.setText(String.format("$%.2f", currentProduct.getPrecio()));
             productDetailDescriptionTextView.setText(currentProduct.getDescripcion());
 
@@ -151,7 +146,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * Añade el producto actual al "carrito" localmente en SharedPreferences.
+     * Adds the current product to the cart via AppDataManager.
      */
     private void addToCart() {
         if (currentProduct == null) {
@@ -159,36 +154,26 @@ public class ProductDetailActivity extends AppCompatActivity {
             return;
         }
 
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        // Aquí puedes añadir una verificación si el usuario está logeado (KEY_IS_LOGGED_IN)
-        // Si no está logeado, podrías redirigirlo a LoginActivity.
-
-        Gson gson = new Gson();
-
-        // Recuperar el carrito actual
-        String cartJson = prefs.getString(KEY_LOCAL_CART, null);
-        Type type = new TypeToken<List<DetallePedido>>(){}.getType();
-        List<DetallePedido> cartItems;
-
-        if (cartJson != null) {
-            cartItems = gson.fromJson(cartJson, type);
-        } else {
-            cartItems = new ArrayList<>();
+        if (currentUserId == -1) {
+            Toast.makeText(this, "Debes iniciar sesión para añadir productos al carrito.", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            return;
         }
 
-        // Crear un nuevo item para el carrito (usando DetallePedido para la estructura)
+        List<DetallePedido> cartItems = appDataManager.getCartItems(); // Get cart items via AppDataManager
+
         DetallePedido newItem = new DetallePedido(
-                (int) (System.currentTimeMillis() % 100000), // ID simple para el detalle
-                0, // ID de pedido (aún no existe para carrito)
+                0, // ID will be assigned by AppDataManager when added to an order
+                0, // Order ID (doesn't exist yet for cart)
                 currentProduct.getId(),
-                1, // ID de característica mock (ej., default)
+                1, // Mock characteristic ID
                 currentQuantity,
                 currentProduct.getPrecio(),
                 currentProduct.getNombre(),
                 currentProduct.getImagenUrl()
         );
 
-        // Añadir o actualizar el item en el carrito
         boolean found = false;
         for (DetallePedido item : cartItems) {
             if (item.getIdProducto() == newItem.getIdProducto() /* && (item.getIdCaracteristica() == newItem.getIdCaracteristica()) */) {
@@ -201,13 +186,9 @@ public class ProductDetailActivity extends AppCompatActivity {
             cartItems.add(newItem);
         }
 
-        // Guardar el carrito actualizado
-        String updatedCartJson = gson.toJson(cartItems);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(KEY_LOCAL_CART, updatedCartJson);
-        editor.apply();
+        appDataManager.saveCartItems(cartItems); // Save cart items via AppDataManager
 
         Toast.makeText(this, currentQuantity + " " + currentProduct.getNombre() + " añadido(s) al carrito.", Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "Carrito actual: " + updatedCartJson);
+        Log.d(TAG, "Carrito actual guardado vía AppDataManager.");
     }
 }

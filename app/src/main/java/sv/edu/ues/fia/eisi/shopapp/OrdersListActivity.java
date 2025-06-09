@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -17,41 +16,45 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
-import sv.edu.ues.fia.eisi.shopapp.OrderAdapter;
+import sv.edu.ues.fia.eisi.shopapp.adapter.OrderAdapter;
 import sv.edu.ues.fia.eisi.shopapp.models.Pedido; // Usamos Pedido
-import sv.edu.ues.fia.eisi.shopapp.models.DetallePedido; // Usamos DetallePedido para el carrito
+import sv.edu.ues.fia.eisi.shopapp.util.AppDataManager;
 
 public class OrdersListActivity extends AppCompatActivity {
 
     private static final String TAG = "OrdersListActivity";
     private static final String PREFS_NAME = "TiendaRopaPrefs";
-    private static final String KEY_LOCAL_ORDERS = "localOrders";
-    private static final String KEY_LOCAL_CART = "localCart";
     private static final String KEY_CURRENT_USER_ID = "currentUserId";
+    private static final String KEY_CURRENT_USER_ROLE = "currentUserRole";
+    private static final String KEY_IS_LOGGED_IN = "isLoggedIn"; // To clear login state
 
     private RecyclerView ordersRecyclerView;
     private OrderAdapter orderAdapter;
     private List<Pedido> orderList;
     private BottomNavigationView bottomNavigationView;
+    private ImageView ordersMenuIcon; // Cart icon in the top bar
+    private ImageView logoutIcon; // Logout icon
 
     private int currentUserId;
+    private int currentUserRole;
+    private AppDataManager appDataManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_orders_list);
 
+        appDataManager = AppDataManager.getInstance(this);
+
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         currentUserId = prefs.getInt(KEY_CURRENT_USER_ID, -1);
+        currentUserRole = prefs.getInt(KEY_CURRENT_USER_ROLE, -1);
 
         if (currentUserId == -1) {
-            Toast.makeText(this, "No se encontró ID de usuario. Por favor, inicia sesión.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "No user ID found. Please log in.", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
@@ -60,6 +63,8 @@ public class OrdersListActivity extends AppCompatActivity {
 
         ordersRecyclerView = findViewById(R.id.ordersRecyclerView);
         bottomNavigationView = findViewById(R.id.bottomNavigationViewOrders);
+        ordersMenuIcon = findViewById(R.id.ordersMenuIcon);
+        logoutIcon = findViewById(R.id.logoutIcon); // Initialize the logout icon
 
         orderList = new ArrayList<>();
         orderAdapter = new OrderAdapter(orderList);
@@ -75,10 +80,17 @@ public class OrdersListActivity extends AppCompatActivity {
             }
         });
 
-        // Botón para simular "Realizar Compra" (desde el carrito)
-        ImageView ordersMenuIcon = findViewById(R.id.ordersMenuIcon);
+        // Configure the cart icon in the top bar
         ordersMenuIcon.setImageResource(R.drawable.ic_shopping_cart);
-        ordersMenuIcon.setOnClickListener(v -> Toast.makeText(OrdersListActivity.this, "Navega al carrito y realiza la compra desde allí.", Toast.LENGTH_LONG).show());
+        ordersMenuIcon.setOnClickListener(v -> {
+            Intent cartIntent = new Intent(OrdersListActivity.this, CartActivity.class);
+            startActivity(cartIntent);
+        });
+
+        // Configure the logout icon
+        logoutIcon.setOnClickListener(v -> {
+            logoutUser();
+        });
 
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -97,7 +109,7 @@ public class OrdersListActivity extends AppCompatActivity {
                 startActivity(cartIntent);
                 return true;
             } else if (itemId == R.id.navigation_profile) {
-                return true; // Ya estamos aquí
+                return true;
             }
             return false;
         });
@@ -107,36 +119,55 @@ public class OrdersListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadLocalOrders();
+        loadOrders();
     }
 
     /**
-     * Carga los pedidos del usuario desde SharedPreferences.
+     * Loads user orders (or all orders if admin) from AppDataManager.
      */
-    private void loadLocalOrders() {
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        Gson gson = new Gson();
+    private void loadOrders() {
+        List<Pedido> fetchedOrders = appDataManager.getOrders();
 
-        String ordersJson = prefs.getString(KEY_LOCAL_ORDERS, null);
-        Type type = new TypeToken<List<Pedido>>(){}.getType();
-        List<Pedido> fetchedOrders;
+        List<Pedido> ordersToDisplay = new ArrayList<>();
 
-        if (ordersJson != null) {
-            fetchedOrders = gson.fromJson(ordersJson, type);
-        } else {
-            fetchedOrders = new ArrayList<>();
-        }
-
-        List<Pedido> currentUserOrders = new ArrayList<>();
-        for(Pedido pedido : fetchedOrders) {
-            if (pedido.getIdUsuario() == currentUserId) {
-                currentUserOrders.add(pedido);
+        if (currentUserRole == 1) { // If it's an administrator (role 1)
+            ordersToDisplay.addAll(fetchedOrders);
+            Toast.makeText(this, "Displaying all orders (Admin View).", Toast.LENGTH_SHORT).show();
+        } else { // If it's a client (role 2 or any other)
+            for(Pedido pedido : fetchedOrders) {
+                if (pedido.getIdUsuario() == currentUserId) {
+                    ordersToDisplay.add(pedido);
+                }
+            }
+            if (ordersToDisplay.isEmpty()) {
+                Toast.makeText(this, "You have no orders yet. Add something to the cart and make a purchase.", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Your orders loaded.", Toast.LENGTH_SHORT).show();
             }
         }
-        orderAdapter.updateOrders(currentUserOrders);
+        orderAdapter.updateOrders(ordersToDisplay);
+    }
 
-        if (currentUserOrders.isEmpty()) {
-            Toast.makeText(this, "No tienes pedidos aún. Añade algo al carrito y realiza una compra.", Toast.LENGTH_LONG).show();
-        }
+    /**
+     * Logs out the current user, clears session data, and navigates to LoginActivity.
+     */
+    private void logoutUser() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.remove(KEY_IS_LOGGED_IN);
+        editor.remove(KEY_CURRENT_USER_ID);
+        editor.remove(KEY_CURRENT_USER_ROLE);
+        editor.apply(); // Apply changes
+
+        // Clear the local cart as well, as it belongs to the user's session
+        appDataManager.clearCart();
+
+        Toast.makeText(this, "Session closed.", Toast.LENGTH_SHORT).show();
+
+        // Redirect to the Login screen and clear the activity stack
+        Intent intent = new Intent(OrdersListActivity.this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish(); // Finish OrdersListActivity
     }
 }

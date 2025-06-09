@@ -6,43 +6,60 @@
     android:layout_height="match_parent"
     tools:context=".OrdersListActivity">
 
-
+    <!-- Barra Superior -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ordersTopBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#A7FFEB"
+        android:background="#8FBF96"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
             android:id="@+id/ordersMenuIcon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/icon_menu"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_shopping_cart"
             android:layout_marginStart="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:contentDescription="Menu" />
+            android:contentDescription="Ir al Carrito"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pedidos"
+            android:text="Mis Pedidos"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textAlignment="center"
             android:textColor="@android:color/black"
             app:layout_constraintStart_toEndOf="@+id/ordersMenuIcon"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/logoutIcon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
+        <!-- Nuevo Icono de Cerrar Sesión -->
+        <ImageView
+            android:id="@+id/logoutIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_logout"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:contentDescription="Cerrar sesión"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+    <!-- RecyclerView para la lista de pedidos -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/ordersRecyclerView"
         android:layout_width="0dp"
@@ -56,6 +73,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationViewOrders"
         tools:listitem="@layout/item_order_list" />
 
+    <!-- Barra de Navegación Inferior -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationViewOrders"
         android:layout_width="match_parent"

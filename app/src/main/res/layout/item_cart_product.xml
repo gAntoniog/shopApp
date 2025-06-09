@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
+    android:background="@drawable/background1"
     app:cardCornerRadius="8dp"
     app:cardElevation="2dp">
 
@@ -59,7 +60,7 @@
                     android:id="@+id/buttonCartDecrease"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:backgroundTint="#A7FFEB"
+                    android:backgroundTint="#8FBF96"
                     android:minWidth="0dp"
                     android:padding="0dp"
                     android:text="-"
@@ -81,7 +82,7 @@
                     android:id="@+id/buttonCartIncrease"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:backgroundTint="#A7FFEB"
+                    android:backgroundTint="#8FBF96"
                     android:minWidth="0dp"
                     android:padding="0dp"
                     android:text="+"
@@ -104,5 +105,9 @@
         android:clickable="true"
         android:focusable="true" />
 
+
     </LinearLayout>
+
+
 </androidx.cardview.widget.CardView>
+

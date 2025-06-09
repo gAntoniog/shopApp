@@ -1,3 +1,11 @@
+<!-- strings.xml -->
 <resources>
-    <string name="app_name">ShopApp</string>
+    <string name="app_name">YourShop</string>
+    <!-- Tus otras cadenas existentes -->
+
+    <string-array name="order_statuses">
+        <item>pendiente</item>
+        <item>completado</item>
+        <item>cancelado</item>
+    </string-array>
 </resources>

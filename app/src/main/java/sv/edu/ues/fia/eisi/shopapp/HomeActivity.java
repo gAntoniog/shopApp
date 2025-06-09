@@ -7,14 +7,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import sv.edu.ues.fia.eisi.shopapp.ProductAdapter;
+import sv.edu.ues.fia.eisi.shopapp.adapter.ProductAdapter;
 import sv.edu.ues.fia.eisi.shopapp.models.Producto; // Usamos el modelo Producto
+import sv.edu.ues.fia.eisi.shopapp.util.AppDataManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,12 +28,17 @@ public class HomeActivity extends AppCompatActivity {
     private List<Producto> productList;
     private BottomNavigationView bottomNavigationView;
 
-    private String currentCategoryFilter = null; // Para filtrar productos por categoría
+    private String currentCategoryFilter = null;
+    private String currentBrandFilter = null;
+
+    private AppDataManager appDataManager; // Instancia de AppDataManager
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        appDataManager = AppDataManager.getInstance(this); // Inicializar AppDataManager
 
         productsRecyclerView = findViewById(R.id.productsRecyclerView);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
@@ -52,18 +57,20 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        // Manejar el filtro de categoría si viene de CategoriesActivity
+        // Handle category filter if coming from CategoriesActivity
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("selectedCategory")) {
             currentCategoryFilter = intent.getStringExtra("selectedCategory");
-            Toast.makeText(this, "Mostrando productos de: " + currentCategoryFilter, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Mostrando productos de la categoría: " + currentCategoryFilter, Toast.LENGTH_LONG).show();
         }
 
+        // Initialize brand click listeners
+        setupBrandClickListeners();
 
-        // Cargar productos simulados al inicio (o filtrados)
-        loadMockProducts(currentCategoryFilter);
+        // Load simulated products at startup (or filtered)
+        applyFiltersAndLoadProducts();
 
-        // Configurar el ícono de menú para ir a categorías
+        // Configure menu icon to go to categories
         ImageView menuIcon = findViewById(R.id.menuIcon);
         menuIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,14 +80,14 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_home) {
-                // Ya estamos en Home, si hay filtro, quitamos el filtro
-                if (currentCategoryFilter != null) {
-                    currentCategoryFilter = null; // Resetear filtro
-                    loadMockProducts(null); // Recargar todos los productos
+                // If already on Home, remove filters
+                if (currentCategoryFilter != null || currentBrandFilter != null) {
+                    currentCategoryFilter = null;
+                    currentBrandFilter = null;
+                    applyFiltersAndLoadProducts();
                     Toast.makeText(HomeActivity.this, "Mostrando todos los productos.", Toast.LENGTH_SHORT).show();
                 }
                 return true;
@@ -104,30 +111,45 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     /**
-     * Carga una lista de productos simulados, opcionalmente filtrados por categoría.
-     * @param categoryFilter La categoría por la cual filtrar, o null para todos los productos.
+     * Sets up click listeners for brand logos.
      */
-    private void loadMockProducts(String categoryFilter) {
-        List<Producto> allMockProducts = new ArrayList<>();
-        allMockProducts.add(new Producto(1, "Camisa Deportiva", "Camisa de poliéster transpirable, ideal para deportes y actividades al aire libre. Diseño ergonómico para mayor comodidad.", 25.99, "Camisas", "https://placehold.co/300x300/A7FFEB/000000?text=Camisa+1"));
-        allMockProducts.add(new Producto(2, "Pantalón Casual", "Pantalón de algodón cómodo para el día a día. Bolsillos laterales y corte recto.", 39.99, "Pantalones", "https://placehold.co/300x300/A7FFEB/000000?text=Pantalon+1"));
-        allMockProducts.add(new Producto(3, "Chaqueta de Invierno", "Chaqueta acolchada y cálida, resistente al agua y al viento. Ideal para climas fríos.", 79.99, "Chaquetas", "https://placehold.co/300x300/A7FFEB/000000?text=Chaqueta+1"));
-        allMockProducts.add(new Producto(4, "Falda Vaquera", "Falda de mezclilla de corte alto con detalles desgastados y botones frontales. Estilo vintage.", 30.50, "Faldas", "https://placehold.co/300x300/A7FFEB/000000?text=Falda+1"));
-        allMockProducts.add(new Producto(5, "Vestido de Verano", "Vestido ligero y fresco para los días calurosos. Tejido suave y diseño floral.", 45.00, "Vestidos", "https://placehold.co/300x300/A7FFEB/000000?text=Vestido+1"));
-        allMockProducts.add(new Producto(6, "Sudadera con Capucha", "Sudadera de algodón suave con diseño moderno y capucha ajustable. Perfecta para el ocio.", 35.00, "Sudaderas", "https://placehold.co/300x300/A7FFEB/000000?text=Sudadera+1"));
+    private void setupBrandClickListeners() {
+        findViewById(R.id.logoNike).setOnClickListener(v -> filterByBrand("Nike"));
+        findViewById(R.id.logoLevis).setOnClickListener(v -> filterByBrand("Levis"));
+        findViewById(R.id.logoDickies).setOnClickListener(v -> filterByBrand("Dickies"));
+        findViewById(R.id.logoTimberland).setOnClickListener(v -> filterByBrand("Timberland"));
+    }
 
-        if (categoryFilter == null || categoryFilter.isEmpty()) {
-            productAdapter.updateProducts(allMockProducts);
-            Toast.makeText(this, "Todos los productos cargados localmente.", Toast.LENGTH_SHORT).show();
-        } else {
-            List<Producto> filteredProducts = new ArrayList<>();
-            for (Producto p : allMockProducts) {
-                if (p.getCategoria().equalsIgnoreCase(categoryFilter)) {
-                    filteredProducts.add(p);
-                }
+    /**
+     * Filters products by the selected brand.
+     * @param brandName The name of the brand to filter by.
+     */
+    private void filterByBrand(String brandName) {
+        currentBrandFilter = brandName;
+        currentCategoryFilter = null; // Reset category filter when brand is selected
+        applyFiltersAndLoadProducts();
+        Toast.makeText(this, "Filtrando por marca: " + brandName, Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void applyFiltersAndLoadProducts() {
+        List<Producto> allProducts = appDataManager.getProducts(); // Obtener productos de AppDataManager
+        List<Producto> filteredProducts = new ArrayList<>();
+
+        for (Producto p : allProducts) {
+            boolean matchesCategory = (currentCategoryFilter == null || p.getCategoria().equalsIgnoreCase(currentCategoryFilter));
+            boolean matchesBrand = (currentBrandFilter == null || p.getMarca().equalsIgnoreCase(currentBrandFilter)); // Usar el nuevo campo 'marca'
+
+            if (matchesCategory && matchesBrand) {
+                filteredProducts.add(p);
             }
-            productAdapter.updateProducts(filteredProducts);
-            Toast.makeText(this, "Productos de '" + categoryFilter + "' cargados.", Toast.LENGTH_SHORT).show();
+        }
+
+        productAdapter.updateProducts(filteredProducts);
+        if (filteredProducts.isEmpty()) {
+            Toast.makeText(this, "No se encontraron productos con los filtros seleccionados.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, filteredProducts.size() + " productos cargados.", Toast.LENGTH_SHORT).show();
         }
     }
 }
