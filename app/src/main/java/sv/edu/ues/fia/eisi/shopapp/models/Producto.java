@@ -2,23 +2,23 @@ package sv.edu.ues.fia.eisi.shopapp.models;
 
 import java.io.Serializable;
 
-public class Producto implements Serializable { // Implementar Serializable
+public class Producto implements Serializable {
     private int id;
     private String nombre;
     private String descripcion;
     private double precio;
     private String categoria;
-    private String marca; // Nuevo campo para la marca
+    private String marca;
     private String imagenUrl;
 
-    // Constructor actualizado con el campo marca
+
     public Producto(int id, String nombre, String descripcion, double precio, String categoria, String marca, String imagenUrl) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
         this.categoria = categoria;
-        this.marca = marca; // Inicializar la marca
+        this.marca = marca;
         this.imagenUrl = imagenUrl;
     }
 

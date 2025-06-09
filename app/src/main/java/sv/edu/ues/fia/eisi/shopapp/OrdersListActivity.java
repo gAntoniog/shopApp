@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sv.edu.ues.fia.eisi.shopapp.adapter.OrderAdapter;
-import sv.edu.ues.fia.eisi.shopapp.models.Pedido; // Usamos Pedido
+import sv.edu.ues.fia.eisi.shopapp.models.Pedido;
 import sv.edu.ues.fia.eisi.shopapp.util.AppDataManager;
 
 public class OrdersListActivity extends AppCompatActivity {
@@ -29,14 +29,14 @@ public class OrdersListActivity extends AppCompatActivity {
     private static final String PREFS_NAME = "TiendaRopaPrefs";
     private static final String KEY_CURRENT_USER_ID = "currentUserId";
     private static final String KEY_CURRENT_USER_ROLE = "currentUserRole";
-    private static final String KEY_IS_LOGGED_IN = "isLoggedIn"; // To clear login state
+    private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
 
     private RecyclerView ordersRecyclerView;
     private OrderAdapter orderAdapter;
     private List<Pedido> orderList;
     private BottomNavigationView bottomNavigationView;
-    private ImageView ordersMenuIcon; // Cart icon in the top bar
-    private ImageView logoutIcon; // Logout icon
+    private ImageView ordersMenuIcon;
+    private ImageView logoutIcon;
 
     private int currentUserId;
     private int currentUserRole;
@@ -122,9 +122,7 @@ public class OrdersListActivity extends AppCompatActivity {
         loadOrders();
     }
 
-    /**
-     * Loads user orders (or all orders if admin) from AppDataManager.
-     */
+
     private void loadOrders() {
         List<Pedido> fetchedOrders = appDataManager.getOrders();
 
@@ -148,9 +146,7 @@ public class OrdersListActivity extends AppCompatActivity {
         orderAdapter.updateOrders(ordersToDisplay);
     }
 
-    /**
-     * Logs out the current user, clears session data, and navigates to LoginActivity.
-     */
+
     private void logoutUser() {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -159,15 +155,15 @@ public class OrdersListActivity extends AppCompatActivity {
         editor.remove(KEY_CURRENT_USER_ROLE);
         editor.apply(); // Apply changes
 
-        // Clear the local cart as well, as it belongs to the user's session
+
         appDataManager.clearCart();
 
         Toast.makeText(this, "Session closed.", Toast.LENGTH_SHORT).show();
 
-        // Redirect to the Login screen and clear the activity stack
+
         Intent intent = new Intent(OrdersListActivity.this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-        finish(); // Finish OrdersListActivity
+        finish();
     }
 }

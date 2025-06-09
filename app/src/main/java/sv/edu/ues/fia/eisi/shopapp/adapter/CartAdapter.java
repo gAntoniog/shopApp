@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import sv.edu.ues.fia.eisi.shopapp.R;
-import sv.edu.ues.fia.eisi.shopapp.models.DetallePedido; // Usamos DetallePedido para los items del carrito
+import sv.edu.ues.fia.eisi.shopapp.models.DetallePedido;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     private List<DetallePedido> cartItems;
     private OnItemActionListener listener;
 
-    // Interfaz para manejar acciones en los items del carrito (cambiar cantidad, eliminar)
+
     public interface OnItemActionListener {
         void onQuantityChange(DetallePedido item, int newQuantity);
         void onRemoveItem(DetallePedido item);
@@ -62,7 +62,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             holder.cartProductImageView.setImageResource(R.drawable.product_example_shirt);
         }
 
-        // Listeners para los botones de cantidad y eliminar
+
         holder.buttonCartDecrease.setOnClickListener(v -> {
             if (listener != null) {
                 int newQuantity = currentItem.getCantidad() - 1;

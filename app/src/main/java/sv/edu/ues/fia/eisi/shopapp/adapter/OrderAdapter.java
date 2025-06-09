@@ -16,11 +16,11 @@ import java.util.List;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
 
-    private List<Pedido> orderList; // Lista de Pedido
+    private List<Pedido> orderList;
     private OnItemClickListener listener;
 
     public interface OnItemClickListener {
-        void onItemClick(Pedido pedido); // Recibe Pedido
+        void onItemClick(Pedido pedido);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -82,7 +82,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         }
     }
 
-    public void updateOrders(List<Pedido> newOrders) { // Recibe lista de Pedido
+    public void updateOrders(List<Pedido> newOrders) {
         this.orderList.clear();
         this.orderList.addAll(newOrders);
         notifyDataSetChanged();

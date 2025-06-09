@@ -30,9 +30,9 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText editTextPassword;
     private Button buttonLogin;
     private TextView textViewRegister;
-    private TextView textViewAdminLogin; // Nuevo TextView para login de administrador
+    private TextView textViewAdminLogin;
 
-    // Usuario mock para pruebas si no hay usuario registrado localmente (ahora es manejado por AppDataManager)
+
     private final String MOCK_EMAIL = "test@example.com";
     private final String MOCK_PASSWORD = "password123";
 
@@ -76,10 +76,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Intenta iniciar sesión con credenciales locales simuladas o registradas.
-     * Ahora usa AppDataManager.
-     */
+
     private void attemptLogin() {
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
@@ -107,15 +104,11 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         } else if (email.equals(MOCK_EMAIL) && password.equals(MOCK_PASSWORD)) {
-            // Login exitoso con credenciales mock si no hay usuario registrado con ese email
-            // Esto es un fallback, idealmente deberías registrar al usuario mock en AppDataManager
-            // Para la demo, el usuario admin ya está en AppDataManager.
-            // Si el MOCK_EMAIL no existe en AppDataManager, podríamos añadirlo aquí con un ID
-            // Este bloque podría eliminarse si todos los usuarios se gestionan vía AppDataManager.
+
             Usuario mockUser = appDataManager.getUserByEmail(MOCK_EMAIL);
             if (mockUser == null) {
                 mockUser = new Usuario(0, "Usuario Demo", MOCK_EMAIL, MOCK_PASSWORD, "Demo Address", "555-0000", 2); // Rol 2 para cliente
-                appDataManager.addUser(mockUser); // Asegurarse de que el usuario demo esté en AppDataManager
+                appDataManager.addUser(mockUser);
             }
 
             editor.putBoolean(KEY_IS_LOGGED_IN, true);

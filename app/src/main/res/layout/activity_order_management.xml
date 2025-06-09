@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".admin.OrderManagementActivity">
 
-    <!-- Barra Superior -->
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/orderManagementTopBar"
         android:layout_width="match_parent"
@@ -41,7 +41,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- RecyclerView para la lista de pedidos administrables -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/adminOrdersRecyclerView"
         android:layout_width="0dp"

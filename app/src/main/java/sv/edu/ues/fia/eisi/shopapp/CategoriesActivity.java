@@ -37,12 +37,11 @@ public class CategoriesActivity extends AppCompatActivity {
             @Override
             public void onItemClick(String categoryName) {
                 Toast.makeText(CategoriesActivity.this, "Has seleccionado: " + categoryName, Toast.LENGTH_SHORT).show();
-                // Aquí podrías implementar la lógica para filtrar productos por categoría
-                // y navegar de vuelta a HomeActivity con el filtro aplicado.
+
                 Intent intent = new Intent(CategoriesActivity.this, HomeActivity.class);
                 intent.putExtra("selectedCategory", categoryName); // Pasar la categoría seleccionada
                 startActivity(intent);
-                finish(); // Finalizar esta actividad para volver a Home
+                finish();
             }
         });
 
@@ -53,9 +52,7 @@ public class CategoriesActivity extends AppCompatActivity {
         loadMockCategories();
     }
 
-    /**
-     * Carga una lista de categorías simuladas.
-     */
+
     private void loadMockCategories() {
         List<String> mockCategories = Arrays.asList(
                 "Camisas",

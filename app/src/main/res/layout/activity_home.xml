@@ -43,7 +43,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Brands Carousel (using HorizontalScrollView and LinearLayout for simplicity) -->
+
     <HorizontalScrollView
         android:id="@+id/brandsScrollView"
         android:layout_width="match_parent"
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <!-- Each brand logo is now explicitly identified for click listeners -->
+
             <ImageView
                 android:id="@+id/logoNike"
                 android:layout_width="80dp"
@@ -110,12 +110,12 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:background="?attr/selectableItemBackgroundBorderless" />
-            <!-- Add more brand logos as needed -->
+
 
         </LinearLayout>
     </HorizontalScrollView>
 
-    <!-- Product list (using RecyclerView with GridLayoutManager) -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/productsRecyclerView"
         android:layout_width="0dp"
@@ -129,7 +129,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         tools:listitem="@layout/item_product_grid" />
 
-    <!-- Bottom Navigation Bar -->
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"

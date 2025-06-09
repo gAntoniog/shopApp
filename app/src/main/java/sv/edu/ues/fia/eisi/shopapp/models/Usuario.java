@@ -1,17 +1,17 @@
 package sv.edu.ues.fia.eisi.shopapp.models;
 
-import java.io.Serializable; // Importar Serializable
+import java.io.Serializable;
 
-public class Usuario implements Serializable { // Implementar Serializable
+public class Usuario implements Serializable {
     private int id;
     private String nombre;
     private String correo;
-    private String contraseña; // Nota: para seguridad, en un backend real, esta debería ser hasheada
+    private String contraseña;
     private String direccion;
     private String telefono;
     private int idRol;
 
-    // Constructor
+
     public Usuario(int id, String nombre, String correo, String contraseña, String direccion, String telefono, int idRol) {
         this.id = id;
         this.nombre = nombre;

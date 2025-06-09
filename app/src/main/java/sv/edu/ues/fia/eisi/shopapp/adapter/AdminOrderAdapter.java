@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import sv.edu.ues.fia.eisi.shopapp.R;
 import sv.edu.ues.fia.eisi.shopapp.models.Pedido;
 import sv.edu.ues.fia.eisi.shopapp.models.Usuario;
-import sv.edu.ues.fia.eisi.shopapp.util.AppDataManager; // Para obtener el usuario por ID
+import sv.edu.ues.fia.eisi.shopapp.util.AppDataManager;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.Ad
 
     private List<Pedido> orderList;
     private OnItemActionListener listener;
-    private AppDataManager appDataManager; // Necesario para obtener el usuario
+    private AppDataManager appDataManager;
 
     public interface OnItemActionListener {
         void onUpdateStatusClick(Pedido order);

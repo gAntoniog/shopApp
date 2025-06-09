@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".admin.ProductManagementActivity">
 
-    <!-- Barra Superior -->
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/productManagementTopBar"
         android:layout_width="match_parent"
@@ -56,7 +56,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- RecyclerView para la lista de productos administrables -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/adminProductsRecyclerView"
         android:layout_width="0dp"

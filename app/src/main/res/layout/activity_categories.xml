@@ -7,7 +7,7 @@
     android:background="@drawable/background1"
     tools:context=".CategoriesActivity">
 
-    <!-- Barra Superior -->
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/categoriesTopBar"
         android:layout_width="match_parent"
@@ -42,7 +42,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Lista de categorías (usando RecyclerView) -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/categoriesRecyclerView"
         android:layout_width="0dp"

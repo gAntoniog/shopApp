@@ -21,14 +21,14 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import sv.edu.ues.fia.eisi.shopapp.models.Producto; // Usamos Producto
+import sv.edu.ues.fia.eisi.shopapp.models.Producto;
 import sv.edu.ues.fia.eisi.shopapp.models.DetallePedido; // Usamos DetallePedido para el carrito
 import sv.edu.ues.fia.eisi.shopapp.util.AppDataManager;
 
 public class ProductDetailActivity extends AppCompatActivity {
 
     private static final String TAG = "ProductDetailActivity";
-    private static final String PREFS_NAME = "TiendaRopaPrefs"; // Se mantiene solo para currentUserId y role
+    private static final String PREFS_NAME = "TiendaRopaPrefs";
 
     private ImageView productDetailImageView;
     private TextView productDetailNameTextView;
@@ -43,7 +43,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private int currentQuantity = 1;
     private Producto currentProduct;
 
-    private AppDataManager appDataManager; // Instancia de AppDataManager
+    private AppDataManager appDataManager;
     private int currentUserId;
 
     @Override
@@ -54,7 +54,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         appDataManager = AppDataManager.getInstance(this);
 
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        currentUserId = prefs.getInt("currentUserId", -1); // Usar la clave correcta de SharedPreferences
+        currentUserId = prefs.getInt("currentUserId", -1);
 
 
         productId = getIntent().getIntExtra("productId", -1);
@@ -118,9 +118,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Loads product details from AppDataManager.
-     */
+
     private void loadProductDetails(int id) {
         currentProduct = appDataManager.getProductById(id);
 
@@ -145,9 +143,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Adds the current product to the cart via AppDataManager.
-     */
+
     private void addToCart() {
         if (currentProduct == null) {
             Toast.makeText(this, "Error: No hay producto seleccionado para añadir.", Toast.LENGTH_SHORT).show();
@@ -186,7 +182,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             cartItems.add(newItem);
         }
 
-        appDataManager.saveCartItems(cartItems); // Save cart items via AppDataManager
+        appDataManager.saveCartItems(cartItems);
 
         Toast.makeText(this, currentQuantity + " " + currentProduct.getNombre() + " añadido(s) al carrito.", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "Carrito actual guardado vía AppDataManager.");

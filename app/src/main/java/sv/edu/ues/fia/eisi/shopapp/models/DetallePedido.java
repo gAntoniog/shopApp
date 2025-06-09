@@ -1,17 +1,17 @@
 package sv.edu.ues.fia.eisi.shopapp.models;
 
 
-import java.io.Serializable; // Importar Serializable
+import java.io.Serializable;
 
-public class DetallePedido implements Serializable { // Implementar Serializable
+public class DetallePedido implements Serializable {
     private int id;
-    private int idPedido; // Clave foránea al pedido (cuando se guarda en SharedPreferences, se asocia)
-    private int idProducto; // Clave foránea al producto
-    private int idCaracteristica; // Si manejas características
+    private int idPedido;
+    private int idProducto;
+    private int idCaracteristica;
     private int cantidad;
     private double precioUnitario;
 
-    // Campos adicionales para facilitar la visualización en la UI
+
     private String nombreProducto;
     private String imagenProductoUrl;
 

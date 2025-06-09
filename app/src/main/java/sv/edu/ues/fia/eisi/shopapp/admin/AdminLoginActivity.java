@@ -29,7 +29,7 @@ public class AdminLoginActivity extends AppCompatActivity {
     private Button buttonAdminLogin;
     private TextView textViewReturnToUserLogin;
 
-    // Credenciales de administrador hardcodeadas para la demo
+
     private final String ADMIN_EMAIL = "admin@example.com";
     private final String ADMIN_PASSWORD = "admin123";
 
@@ -43,8 +43,7 @@ public class AdminLoginActivity extends AppCompatActivity {
         buttonAdminLogin = findViewById(R.id.buttonAdminLogin);
         textViewReturnToUserLogin = findViewById(R.id.textViewReturnToUserLogin);
 
-        // Precargar el email de administrador si existe en AppDataManager
-        // (Esto asegura que el usuario administrador inicial esté en AppDataManager)
+
         AppDataManager.getInstance(this).getUsers(); // Esto forzará la inicialización si es la primera vez
 
         buttonAdminLogin.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +72,7 @@ public class AdminLoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Recuperar el usuario admin desde AppDataManager (que lo carga de SharedPreferences)
+
         Usuario adminUser = AppDataManager.getInstance(this).getUserByEmail(ADMIN_EMAIL);
 
         if (adminUser != null && adminUser.getCorreo().equalsIgnoreCase(email) && adminUser.getContraseña().equals(password) && adminUser.getIdRol() == 1) {

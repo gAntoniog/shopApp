@@ -71,7 +71,7 @@ public class OrderDetailProductAdapter extends RecyclerView.Adapter<OrderDetailP
         }
     }
 
-    public void updateProducts(List<DetallePedido> newProducts) { // Recibe lista de DetallePedido
+    public void updateProducts(List<DetallePedido> newProducts) {
         this.productList.clear();
         this.productList.addAll(newProducts);
         notifyDataSetChanged();

@@ -14,7 +14,7 @@ import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
 
-    private List<String> categoryList; // Lista de nombres de categorías (Strings)
+    private List<String> categoryList;
     private OnItemClickListener listener;
 
     public interface OnItemClickListener {

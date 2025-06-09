@@ -3,8 +3,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler; // Importar Handler
-
+import android.os.Handler;
 
 public class IntroActivity extends AppCompatActivity {
 

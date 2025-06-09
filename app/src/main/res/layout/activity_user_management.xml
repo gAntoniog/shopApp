@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".admin.UserManagementActivity">
 
-    <!-- Barra Superior -->
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/userManagementTopBar"
         android:layout_width="match_parent"
@@ -42,7 +42,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- RecyclerView para la lista de usuarios -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/adminUsersRecyclerView"
         android:layout_width="0dp"
@@ -54,6 +54,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:listitem="@layout/item_admin_user" /> <!-- Necesitarás crear item_admin_user.xml -->
+        tools:listitem="@layout/item_admin_user" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

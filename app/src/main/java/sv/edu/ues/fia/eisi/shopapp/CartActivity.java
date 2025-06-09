@@ -25,14 +25,14 @@ import java.util.List;
 import java.util.Locale;
 
 import sv.edu.ues.fia.eisi.shopapp.adapter.CartAdapter;
-import sv.edu.ues.fia.eisi.shopapp.models.DetallePedido; // Usamos DetallePedido para el carrito
-import sv.edu.ues.fia.eisi.shopapp.models.Pedido; // Usamos Pedido para simular la compra
+import sv.edu.ues.fia.eisi.shopapp.models.DetallePedido;
+import sv.edu.ues.fia.eisi.shopapp.models.Pedido;
 import sv.edu.ues.fia.eisi.shopapp.util.AppDataManager;
 
 public class CartActivity extends AppCompatActivity {
 
     private static final String TAG = "CartActivity";
-    private static final String PREFS_NAME = "TiendaRopaPrefs"; // Se mantiene solo para currentUserId y role
+    private static final String PREFS_NAME = "TiendaRopaPrefs";
 
     private RecyclerView cartRecyclerView;
     private CartAdapter cartAdapter;
@@ -67,7 +67,7 @@ public class CartActivity extends AppCompatActivity {
         buttonCheckout = findViewById(R.id.buttonCheckout);
         bottomNavigationView = findViewById(R.id.bottomNavigationViewCart);
 
-        cartItems = new ArrayList<>(); // Initialize the list
+        cartItems = new ArrayList<>();
         cartAdapter = new CartAdapter(cartItems);
         cartRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         cartRecyclerView.setAdapter(cartAdapter);
@@ -82,7 +82,7 @@ public class CartActivity extends AppCompatActivity {
                         break;
                     }
                 }
-                appDataManager.saveCartItems(cartItems); // Save updated cart via AppDataManager
+                appDataManager.saveCartItems(cartItems);
                 updateCartTotal();
                 cartAdapter.notifyDataSetChanged();
             }
@@ -90,7 +90,7 @@ public class CartActivity extends AppCompatActivity {
             @Override
             public void onRemoveItem(DetallePedido item) {
                 cartItems.remove(item);
-                appDataManager.saveCartItems(cartItems); // Save updated cart via AppDataManager
+                appDataManager.saveCartItems(cartItems);
                 updateCartTotal();
                 cartAdapter.notifyDataSetChanged();
                 Toast.makeText(CartActivity.this, "Producto eliminado del carrito.", Toast.LENGTH_SHORT).show();
@@ -102,7 +102,7 @@ public class CartActivity extends AppCompatActivity {
 
         buttonCheckout.setOnClickListener(v -> simulateCheckout());
 
-        // Load cart items and update total when activity starts/resumes
+
         loadCartItems();
         updateCartTotal();
 
@@ -132,13 +132,11 @@ public class CartActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadCartItems(); // Reload cart items every time the activity resumes
+        loadCartItems();
         updateCartTotal();
     }
 
-    /**
-     * Loads cart items from AppDataManager.
-     */
+
     private void loadCartItems() {
         cartItems.clear();
         cartItems.addAll(appDataManager.getCartItems());
@@ -154,10 +152,7 @@ public class CartActivity extends AppCompatActivity {
         cartTotalTextView.setText(String.format("Total del carrito: $%.2f", total));
     }
 
-    /**
-     * Simulates the checkout process, creating an order and clearing the cart.
-     * Now uses AppDataManager for all order and cart operations.
-     */
+
     private void simulateCheckout() {
         if (cartItems.isEmpty()) {
             Toast.makeText(this, "Tu carrito está vacío. Añade productos antes de comprar.", Toast.LENGTH_SHORT).show();
@@ -175,8 +170,8 @@ public class CartActivity extends AppCompatActivity {
         appDataManager.addOrder(newOrder, new ArrayList<>(cartItems)); // Add order and its details via AppDataManager
         appDataManager.clearCart(); // Clear the cart via AppDataManager
 
-        cartItems.clear(); // Clear the in-memory list
-        cartAdapter.notifyDataSetChanged(); // Notify adapter to reflect changes
+        cartItems.clear();
+        cartAdapter.notifyDataSetChanged();
 
         Toast.makeText(this, "Compra realizada exitosamente! Pedido #" + newOrder.getId(), Toast.LENGTH_LONG).show();
         Intent intent = new Intent(CartActivity.this, OrdersListActivity.class);

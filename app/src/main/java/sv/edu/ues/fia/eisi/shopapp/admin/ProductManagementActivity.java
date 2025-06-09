@@ -80,10 +80,7 @@ public class ProductManagementActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Muestra un diálogo para añadir o editar un producto.
-     * @param product El producto a editar, o null si se va a añadir uno nuevo.
-     */
+
     private void showAddEditProductDialog(Producto product) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
@@ -159,10 +156,7 @@ public class ProductManagementActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    /**
-     * Confirma la eliminación de un producto.
-     * @param product El producto a eliminar.
-     */
+
     private void confirmDeleteProduct(Producto product) {
         new AlertDialog.Builder(this)
                 .setTitle("Confirmar Eliminación")

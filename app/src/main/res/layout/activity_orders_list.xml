@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".OrdersListActivity">
 
-    <!-- Barra Superior -->
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ordersTopBar"
         android:layout_width="match_parent"
@@ -42,7 +42,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-        <!-- Nuevo Icono de Cerrar Sesión -->
+
         <ImageView
             android:id="@+id/logoutIcon"
             android:layout_width="48dp"
@@ -59,7 +59,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- RecyclerView para la lista de pedidos -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/ordersRecyclerView"
         android:layout_width="0dp"
@@ -73,7 +73,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationViewOrders"
         tools:listitem="@layout/item_order_list" />
 
-    <!-- Barra de Navegación Inferior -->
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationViewOrders"
         android:layout_width="match_parent"

@@ -15,8 +15,8 @@ import sv.edu.ues.fia.eisi.shopapp.util.AppDataManager;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private static final String PREFS_NAME = "TiendaRopaPrefs"; // Se sigue usando para el estado de login
-    // No necesitamos KEY_REGISTERED_USER aquí directamente, AppDataManager lo maneja
+    private static final String PREFS_NAME = "TiendaRopaPrefs";
+
 
     private TextInputEditText editTextName, editTextPhone, editTextRegisterEmail,
             editTextRegisterPassword, editTextConfirmPassword, editTextAddress;

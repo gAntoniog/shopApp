@@ -57,20 +57,20 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        // Handle category filter if coming from CategoriesActivity
+
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("selectedCategory")) {
             currentCategoryFilter = intent.getStringExtra("selectedCategory");
             Toast.makeText(this, "Mostrando productos de la categoría: " + currentCategoryFilter, Toast.LENGTH_LONG).show();
         }
 
-        // Initialize brand click listeners
+
         setupBrandClickListeners();
 
-        // Load simulated products at startup (or filtered)
+
         applyFiltersAndLoadProducts();
 
-        // Configure menu icon to go to categories
+
         ImageView menuIcon = findViewById(R.id.menuIcon);
         menuIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,9 +110,7 @@ public class HomeActivity extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.navigation_home);
     }
 
-    /**
-     * Sets up click listeners for brand logos.
-     */
+
     private void setupBrandClickListeners() {
         findViewById(R.id.logoNike).setOnClickListener(v -> filterByBrand("Nike"));
         findViewById(R.id.logoLevis).setOnClickListener(v -> filterByBrand("Levis"));
@@ -120,10 +118,7 @@ public class HomeActivity extends AppCompatActivity {
         findViewById(R.id.logoTimberland).setOnClickListener(v -> filterByBrand("Timberland"));
     }
 
-    /**
-     * Filters products by the selected brand.
-     * @param brandName The name of the brand to filter by.
-     */
+
     private void filterByBrand(String brandName) {
         currentBrandFilter = brandName;
         currentCategoryFilter = null; // Reset category filter when brand is selected

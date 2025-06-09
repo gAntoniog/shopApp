@@ -17,9 +17,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import sv.edu.ues.fia.eisi.shopapp.R;
-import sv.edu.ues.fia.eisi.shopapp.adapter.AdminOrderAdapter; // Nuevo adaptador
+import sv.edu.ues.fia.eisi.shopapp.adapter.AdminOrderAdapter;
 import sv.edu.ues.fia.eisi.shopapp.models.Pedido;
-import sv.edu.ues.fia.eisi.shopapp.models.Usuario; // Necesario para obtener nombre de usuario
+import sv.edu.ues.fia.eisi.shopapp.models.Usuario;
 import sv.edu.ues.fia.eisi.shopapp.util.AppDataManager;
 
 import java.util.ArrayList;
@@ -70,11 +70,7 @@ public class OrderManagementActivity extends AppCompatActivity {
         for (Pedido order : orders) {
             Usuario user = appDataManager.getUserById(order.getIdUsuario());
             if (user != null) {
-                order.setDetalles(order.getDetalles()); // Asegurar que los detalles están cargados
-                // Puedes usar el nombre del usuario en el Pedido para mostrarlo en el adaptador
-                // Para esto, necesitarías añadir un campo transitorio 'userName' al modelo Pedido
-                // o pasarlo como parte de un objeto de vista que combine Pedido y Usuario.
-                // Por simplicidad, el adaptador lo buscará en tiempo de ejecución o lo dejaremos como ID de usuario.
+                order.setDetalles(order.getDetalles());
             }
         }
         adminOrderAdapter.updateOrders(orders);
@@ -83,10 +79,7 @@ public class OrderManagementActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Muestra un diálogo para actualizar el estado de un pedido.
-     * @param order El pedido cuyo estado se va a actualizar.
-     */
+
     private void showUpdateStatusDialog(Pedido order) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
@@ -103,11 +96,11 @@ public class OrderManagementActivity extends AppCompatActivity {
 
         // Opciones del Spinner para el estado
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.order_statuses, android.R.layout.simple_spinner_item); // Necesitarás crear R.array.order_statuses
+                R.array.order_statuses, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         statusSpinner.setAdapter(adapter);
 
-        // Seleccionar el estado actual del pedido
+
         int spinnerPosition = adapter.getPosition(order.getEstado());
         statusSpinner.setSelection(spinnerPosition);
 
@@ -118,7 +111,7 @@ public class OrderManagementActivity extends AppCompatActivity {
             appDataManager.updateOrderStatus(order.getId(), newStatus);
             Toast.makeText(this, "Estado del pedido #" + order.getId() + " actualizado a: " + newStatus, Toast.LENGTH_SHORT).show();
             dialog.dismiss();
-            loadOrders(); // Recargar la lista para reflejar el cambio
+            loadOrders();
         });
 
         dialog.show();
